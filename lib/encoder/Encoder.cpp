@@ -1,34 +1,32 @@
 #include "Encoder.h"
+#include "Rotary.h"
 
 #define ENCODER_CLK 2
 #define ENCODER_DT 3
 #define ENCODER_SW 4
 
-static bool currentStateCLK;
-static bool lastStateCLK;
 static bool lastStateSW = HIGH;
 static bool currentStateSW;
 static unsigned long pressedTime = 0;
 static unsigned long releasedTime = 0;
 
+Rotary rotary = Rotary(ENCODER_CLK, ENCODER_DT);
+
 void Encoder::init() {
     pinMode(ENCODER_CLK, INPUT);
     pinMode(ENCODER_DT, INPUT);
     pinMode(ENCODER_SW, INPUT_PULLUP);
-    lastStateCLK = digitalRead(ENCODER_CLK);
 }
 
 void Encoder::checkActivity(update_t &_update, state_t &_state) {
-    currentStateCLK = digitalRead(ENCODER_CLK);
-    if (currentStateCLK != lastStateCLK && currentStateCLK == 1) {
-        if (digitalRead(ENCODER_DT) != currentStateCLK) {
-            computeRotation(false, _update, _state);
-        } else {
-            computeRotation(true, _update, _state);
-        }
+    unsigned char result = rotary.process();
+    if (result == DIR_CW) {
+        computeRotation(true, _update, _state);
+        _update.display = true;
+    } else if (result == DIR_CCW) {
+        computeRotation(false, _update, _state);
         _update.display = true;
     }
-    lastStateCLK = currentStateCLK;
 
     currentStateSW = digitalRead(ENCODER_SW);
     if (lastStateSW == HIGH && currentStateSW == LOW) {
@@ -45,7 +43,7 @@ void Encoder::checkActivity(update_t &_update, state_t &_state) {
         }
     }
     lastStateSW = currentStateSW;
-    delay(10);
+    delay(1);
 }
 
 void Encoder::computeRotation(bool _add, update_t &_update, state_t &_state) {
