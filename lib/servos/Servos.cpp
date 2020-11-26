@@ -1,8 +1,13 @@
 #include "Servos.h"
 #include <Servo.h>
 
+#define PIN_MOTOR 11
+#define PIN_IN_STREAM 10
+#define PIN_IN_BARREL 9
+#define PIN_OUT_BARREL 5
+#define PIN_OUT_HOSE 6
+
 typedef struct {
-    Servo pump;
     Servo valve_in_stream;
     Servo valve_in_barrel;
     Servo valve_out_barrel;
@@ -11,27 +16,27 @@ typedef struct {
 
 static servos_t servos;
 
-void driveServo(Servo &_servo, byte _percentage);
+void drivePump(byte _percentage);
 void setServo(Servo &_servo, bool _state);
 
 void Servos::init() {
-    servos.pump.attach(11);
-    servos.valve_in_stream.attach(10);
-    servos.valve_in_barrel.attach(9);
-    servos.valve_out_barrel.attach(5);
-    servos.valve_out_hose.attach(6);
+    pinMode(PIN_MOTOR, OUTPUT);
+    servos.valve_in_stream.attach(PIN_IN_STREAM);
+    servos.valve_in_barrel.attach(PIN_IN_BARREL);
+    servos.valve_out_barrel.attach(PIN_OUT_BARREL);
+    servos.valve_out_hose.attach(PIN_OUT_HOSE);
 
-    driveServo(servos.pump, 0);
-    driveServo(servos.valve_in_stream, 0);
-    driveServo(servos.valve_in_barrel, 0);
-    driveServo(servos.valve_out_barrel, 0);
-    driveServo(servos.valve_out_hose, 0);
+    drivePump(0);
+    setServo(servos.valve_in_stream, false);
+    setServo(servos.valve_in_barrel, false);
+    setServo(servos.valve_out_barrel, false);
+    setServo(servos.valve_out_hose, false);
 }
 
 void Servos::actOnChanges(update_t &_update, state_t &_state) {
     if (_update.servos) {
         _update.servos = false;
-        driveServo(servos.pump, _state.motorSpeed);
+        drivePump(_state.motorSpeed);
         setServo(servos.valve_in_stream, _state.valve_in_stream);
         setServo(servos.valve_in_barrel, _state.valve_in_barrel);
         setServo(servos.valve_out_barrel,_state.valve_out_barrel);
@@ -41,13 +46,13 @@ void Servos::actOnChanges(update_t &_update, state_t &_state) {
 
 void setServo(Servo &_servo, bool _state) {
     if (_state) {
-        driveServo(_servo, 60);
+        _servo.write(120);
     } else {
-        driveServo(_servo, 10);
+        _servo.write(20);
     }
 }
 
-void driveServo(Servo &_servo, byte _percentage) {
-    int pulselength = map(_percentage, 0, 100, 10, 180);
-    _servo.write(pulselength);
+void drivePump(byte _percentage) {
+    int pulselength = map(_percentage, 0, 100, 0, 255);
+    analogWrite(PIN_MOTOR, pulselength);
 }
