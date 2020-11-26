@@ -2,6 +2,7 @@
 
 #define VOLTAGE_PIN A7
 #define FLOW_PIN A6
+#define BUZZER_PIN 7
 
 static double minVoltage = 18.0;
 static double maxVoltage = 21.0;
@@ -14,6 +15,7 @@ static unsigned long lastUpdate = 0;
 void Measurement::init(monitor_t &_monitor) {
     pinMode(VOLTAGE_PIN, INPUT);
     pinMode(FLOW_PIN, INPUT);
+    pinMode(BUZZER_PIN, OUTPUT);
 
     _monitor.rawVoltage = getVoltage();
     _monitor.percentageVoltage = map(_monitor.rawVoltage, minVoltage, maxVoltage);
@@ -42,13 +44,18 @@ void Measurement::actOnChanges(update_t &_update, state_t &_state, monitor_t &_m
         _state.valve_in_barrel = false;
         _state.valve_out_barrel = false;
         _state.valve_out_hose = false;
+
+        _state.buzzer = true;
     }
 
     if (_state.motorSpeed == 100 && _monitor.percentageFlow < 25) {
         /* ACT ON UNDERFLOW */
         _state.motorSpeed = 0;
         _state.valve_in_stream = false;
+        _state.buzzer = true;
     }
+
+    updateBuzzer(_state.buzzer);
 }
 
 void Measurement::calculateVoltage(monitor_t &_monitor) {
@@ -117,4 +124,12 @@ double Measurement::getFlow() {
 
 byte Measurement::map(double x, double in_min, double in_max) {
     return ((x - in_min) * 100) / (in_max - in_min);
+}
+
+void Measurement::updateBuzzer(bool state) {
+    if (state) {
+        digitalWrite(BUZZER_PIN, HIGH);
+    } else {
+        digitalWrite(BUZZER_PIN, LOW);
+    }
 }

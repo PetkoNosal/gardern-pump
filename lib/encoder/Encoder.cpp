@@ -39,7 +39,7 @@ void Encoder::checkActivity(update_t &_update, state_t &_state) {
             _update.display = true;
             _update.servos = true;
         } else {
-            config();
+            config(_state);
         }
     }
     lastStateSW = currentStateSW;
@@ -93,6 +93,7 @@ void Encoder::interact(state_t &_state) {
     }
 }
 
-void Encoder::config() {
+void Encoder::config(state_t &_state) {
     // LONG PRESS OF BUTTON
+    _state.buzzer = false;
 }

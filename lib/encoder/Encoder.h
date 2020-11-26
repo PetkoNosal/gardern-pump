@@ -11,7 +11,7 @@ public:
 private:
     static void computeRotation(bool _add, update_t &_update, state_t &_state);
     static void interact(state_t &_state);
-    void config();
+    void config(state_t &_state);
 };
 
 #endif //GARDEN_PUMP_ENCODER_H

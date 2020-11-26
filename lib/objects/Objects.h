@@ -14,6 +14,7 @@ typedef struct {
     bool valve_out_hose;
     byte selected;
     byte motorSpeed;
+    bool buzzer;
 } state_t;
 
 typedef struct {

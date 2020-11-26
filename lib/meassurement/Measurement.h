@@ -15,6 +15,7 @@ private:
     double getFlow();
     void calculateFlow(monitor_t &_monitor);
     byte map(double x, double in_min, double in_max);
+    void updateBuzzer(bool state);
 };
 
 #endif //GARDEN_PUMP_MEASUREMENT_H
