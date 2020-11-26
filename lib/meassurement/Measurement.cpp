@@ -47,7 +47,7 @@ void Measurement::actOnChanges(update_t &_update, state_t &_state, monitor_t &_m
     if (_state.motorSpeed == 100 && _monitor.percentageFlow < 25) {
         /* ACT ON UNDERFLOW */
         _state.motorSpeed = 0;
-        _state.valve_in_barrel = false;
+        _state.valve_in_stream = false;
     }
 }
 
@@ -89,7 +89,7 @@ void Measurement::calculateFlow(monitor_t &_monitor) {
 
 double Measurement::getVoltage() {
     double rawInput = (analogRead(VOLTAGE_PIN) * 5.0) / 1024.0;
-    double currentVoltage = rawInput / 0.20096205237;
+    double currentVoltage = rawInput / 0.19741448963102612442768650686776;
     if (currentVoltage < minVoltage) {
         return minVoltage;
     }
