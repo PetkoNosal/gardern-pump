@@ -25,7 +25,7 @@ void setup() {
 void loop() {
     /* UPDATE STATES */
     encoder.checkActivity(update, state);
-    measurement.updateReadings(update, monitor);
+    measurement.updateReadings(update, state, monitor);
 
     /* ACT ON UPDATES */
     display.redrawDisplay(update, state, monitor);

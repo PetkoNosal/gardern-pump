@@ -19,7 +19,7 @@ typedef struct {
 
 typedef struct {
     double rawVoltage;
-    double rawFlow;
+    byte rawFlow;
     byte percentageVoltage;
     byte percentageFlow;
 } monitor_t;

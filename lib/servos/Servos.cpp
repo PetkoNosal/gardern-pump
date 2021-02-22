@@ -5,25 +5,25 @@
 #define SERVO_DELAY 500
 
 /// SERVO FOR VALVE IN-STREAM ////
-#define IN_STREAM_PIN 10
+#define IN_STREAM_PIN 5
 #define IN_STREAM_MIN 20
 #define IN_STREAM_MAX 95
 //////////////////////////////////
 
 /// SERVO FOR VALVE IN-BARREL ////
-#define IN_BARREL_PIN 9
+#define IN_BARREL_PIN 6
 #define IN_BARREL_MIN 20
 #define IN_BARREL_MAX 110
 //////////////////////////////////
 
 /// SERVO FOR VALVE OUT-BARREL ///
-#define OUT_BARREL_PIN 5
+#define OUT_BARREL_PIN 10
 #define OUT_BARREL_MIN 20
 #define OUT_BARREL_MAX 120
 //////////////////////////////////
 
 /// SERVO FOR VALVE OUT-HOSE /////
-#define OUT_HOSE_PIN 6
+#define OUT_HOSE_PIN 9
 #define OUT_HOSE_MIN 20
 #define OUT_HOSE_MAX 100
 //////////////////////////////////
