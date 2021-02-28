@@ -71,7 +71,11 @@ void Measurement::actOnChanges(update_t &_update, state_t &_state, monitor_t &_m
 
     if (underFlow >= treshold) {
         /* ACT ON UNDERFLOW */
+        _update.servos = true;
+        _update.display = true;
+
         _state.motorSpeed = 0;
+
         _state.valve_in_stream = false;
         _state.buzzer = true;
     }
