@@ -55,12 +55,6 @@ void Servos::init() {
     servos.valve_in_barrel.servo.attach(servos.valve_in_barrel.pin);
     servos.valve_out_barrel.servo.attach(servos.valve_out_barrel.pin);
     servos.valve_out_hose.servo.attach(servos.valve_out_hose.pin);
-
-    drivePump(0);
-    setServo(servos.valve_in_stream, false);
-    setServo(servos.valve_in_barrel, false);
-    setServo(servos.valve_out_barrel, false);
-    setServo(servos.valve_out_hose, false);
 }
 
 void Servos::actOnChanges(update_t &_update, state_t &_state) {

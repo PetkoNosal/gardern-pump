@@ -49,11 +49,15 @@ void Encoder::checkActivity(update_t &_update, state_t &_state) {
 void Encoder::computeRotation(bool _add, update_t &_update, state_t &_state) {
     if (_state.pump) {
         if (_add) {
-            if (_state.motorSpeed < 100) {
+            if (_state.motorSpeed < 40) {
+                _state.motorSpeed = 40;
+            } else if (_state.motorSpeed < 100) {
                 _state.motorSpeed = _state.motorSpeed + 10;
             }
         } else {
-            if (_state.motorSpeed > 0) {
+            if (_state.motorSpeed <= 40) {
+                _state.motorSpeed = 0;
+            } else {
                 _state.motorSpeed = _state.motorSpeed - 10;
             }
         }
