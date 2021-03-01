@@ -1,14 +1,14 @@
 #include "Measurement.h"
 
 #define VOLTAGE_PIN A7
-#define FLOW_PIN A6
+#define FLOW_PIN 3
 #define BUZZER_PIN 7
 
 static double minVoltage = 18.0;
 static double maxVoltage = 21.0;
 
-static double minFlow = 19.7;
-static double maxFlow = 100.5;
+static double minFlow = 0;
+static double maxFlow = 1000;
 
 byte underVoltage = 0;
 byte underFlow = 0;
@@ -20,7 +20,7 @@ static unsigned long lastUpdate = 0;
 
 void Measurement::init(monitor_t &_monitor) {
     pinMode(VOLTAGE_PIN, INPUT);
-    attachInterrupt(FLOW_PIN, countFlow, RISING);
+    attachInterrupt(digitalPinToInterrupt(FLOW_PIN), countFlow, RISING);
     pinMode(BUZZER_PIN, OUTPUT);
 
     interrupts();

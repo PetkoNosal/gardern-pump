@@ -2,7 +2,7 @@
 #include "Rotary.h"
 
 #define ENCODER_CLK 2
-#define ENCODER_DT 3
+#define ENCODER_DT 8
 #define ENCODER_SW 4
 
 static bool lastStateSW = HIGH;
