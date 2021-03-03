@@ -31,7 +31,6 @@
 /// MOTOR CUSTOM PWM STUFF ///////
 volatile byte pwm_array[] = {0,0,0,0,0,0,0,0,0,0};
 volatile byte pwm_position = 0;
-volatile bool pwm_current = false;
 //////////////////////////////////
 
 typedef struct {
@@ -116,12 +115,9 @@ ISR(TIMER2_COMPA_vect) {
         pwm_position = 0;
     }
 
-    if (pwm_array[pwm_position] != pwm_current) {
-        if (pwm_array[pwm_position] == 1) {
-            PORTB |= (1 << PB3);
-        } else {
-            PORTB &= ~(1 << PB3);
-        }
-        pwm_current = pwm_array[pwm_position];
+    if (pwm_array[pwm_position] == 1) {
+        PORTB |= (1 << PB3);
+    } else {
+        PORTB &= ~(1 << PB3);
     }
 }
