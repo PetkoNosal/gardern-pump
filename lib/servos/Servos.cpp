@@ -28,11 +28,17 @@
 #define OUT_HOSE_MAX 100
 //////////////////////////////////
 
+/// MOTOR CUSTOM PWM STUFF ///////
+volatile byte pwm_array[] = {0,0,0,0,0,0,0,0,0,0};
+volatile byte pwm_position = 0;
+volatile bool pwm_current = false;
+//////////////////////////////////
+
 typedef struct {
     Servo servo;
-    int pin;
-    int min;
-    int max;
+    byte pin;
+    byte min;
+    byte max;
     bool state;
 } valve_servo_t;
 
@@ -49,8 +55,17 @@ void drivePump(byte _percentage);
 void setServo(valve_servo_t &_servo, bool _state);
 
 void Servos::init() {
-    pinMode(PIN_MOTOR, OUTPUT);
+    noInterrupts();
+    TCCR2A = 0;
+    TCCR2B = 0;
+    TCNT2 = 0;
+    OCR2A = 122;
+    TCCR2A |= (1 << WGM21);
+    TCCR2B |= (1 << CS20);
+    TIMSK2 |= (1 << OCIE2A);
+    interrupts();
 
+    pinMode(PIN_MOTOR, OUTPUT);
     servos.valve_in_stream.servo.attach(servos.valve_in_stream.pin);
     servos.valve_in_barrel.servo.attach(servos.valve_in_barrel.pin);
     servos.valve_out_barrel.servo.attach(servos.valve_out_barrel.pin);
@@ -84,6 +99,29 @@ void setServo(valve_servo_t &_servo, bool _state) {
 }
 
 void drivePump(byte _percentage) {
-    int pulselength = map(_percentage, 0, 100, 0, 255);
-    analogWrite(PIN_MOTOR, pulselength);
+    byte ones = _percentage / 10;
+    for (byte i = 0; i < 10; i++) {
+        if (i < ones) {
+            pwm_array[i] = 1;
+        } else {
+            pwm_array[i] = 0;
+        }
+    }
+}
+
+ISR(TIMER2_COMPA_vect) {
+    if (pwm_position < 10) {
+        pwm_position++;
+    } else {
+        pwm_position = 0;
+    }
+
+    if (pwm_array[pwm_position] != pwm_current) {
+        if (pwm_array[pwm_position] == 1) {
+            PORTB |= (1 << PB3);
+        } else {
+            PORTB &= ~(1 << PB3);
+        }
+        pwm_current = pwm_array[pwm_position];
+    }
 }
