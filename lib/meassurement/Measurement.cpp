@@ -54,7 +54,7 @@ void Measurement::updateReadings(update_t &_update, state_t &_state, monitor_t &
 }
 
 void Measurement::actOnChanges(update_t &_update, state_t &_state, monitor_t &_monitor) {
-    if (underVoltage >= treshold) {
+    if (underVoltage >= treshold && !_state.buzzer) {
         /* ACT ON UNDERVOLTAGE */
         _update.servos = true;
         _update.display = true;
@@ -69,7 +69,7 @@ void Measurement::actOnChanges(update_t &_update, state_t &_state, monitor_t &_m
         _state.buzzer = true;
     }
 
-    if (underFlow >= treshold) {
+    if (underFlow >= treshold && !_state.buzzer) {
         /* ACT ON UNDERFLOW */
         _update.servos = true;
         _update.display = true;

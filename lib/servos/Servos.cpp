@@ -109,15 +109,15 @@ void drivePump(byte _percentage) {
 }
 
 ISR(TIMER2_COMPA_vect) {
-    if (pwm_position < 10) {
-        pwm_position++;
-    } else {
-        pwm_position = 0;
-    }
-
     if (pwm_array[pwm_position] == 1) {
         PORTB |= (1 << PB3);
     } else {
         PORTB &= ~(1 << PB3);
+    }
+
+    if (pwm_position < 9) {
+        pwm_position++;
+    } else {
+        pwm_position = 0;
     }
 }
