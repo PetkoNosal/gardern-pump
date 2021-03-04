@@ -1,7 +1,6 @@
 #include "Servos.h"
 #include <Servo.h>
 
-#define PIN_MOTOR 11
 #define SERVO_DELAY 500
 
 /// SERVO FOR VALVE IN-STREAM ////
@@ -28,9 +27,10 @@
 #define OUT_HOSE_MAX 100
 //////////////////////////////////
 
-/// MOTOR CUSTOM PWM STUFF ///////
-volatile byte pwm_array[] = {0,0,0,0,0,0,0,0,0,0};
-volatile byte pwm_position = 0;
+/// PUMP /////////////////////////
+#define MOTOR_PIN 11
+#define MOTOR_MIN 0
+#define MOTOR_MAX 130
 //////////////////////////////////
 
 typedef struct {
@@ -46,35 +46,26 @@ typedef struct servos {
     valve_servo_t valve_in_barrel = {Servo(), IN_BARREL_PIN, IN_BARREL_MIN, IN_BARREL_MAX, true};
     valve_servo_t valve_out_barrel = {Servo(), OUT_BARREL_PIN, OUT_BARREL_MIN, OUT_BARREL_MAX, true};
     valve_servo_t valve_out_hose = {Servo(), OUT_HOSE_PIN, OUT_HOSE_MIN, OUT_HOSE_MAX, true};
+    valve_servo_t pump = {Servo(), MOTOR_PIN, MOTOR_MIN, MOTOR_MAX, true};
 } servos_t;
 
 static servos_t servos;
 
-void drivePump(byte _percentage);
+void drivePump(valve_servo_t &_servo, byte _percentage);
 void setServo(valve_servo_t &_servo, bool _state);
 
 void Servos::init() {
-    noInterrupts();
-    TCCR2A = 0;
-    TCCR2B = 0;
-    TCNT2 = 0;
-    OCR2A = 122;
-    TCCR2A |= (1 << WGM21);
-    TCCR2B |= (1 << CS20);
-    TIMSK2 |= (1 << OCIE2A);
-    interrupts();
-
-    pinMode(PIN_MOTOR, OUTPUT);
     servos.valve_in_stream.servo.attach(servos.valve_in_stream.pin);
     servos.valve_in_barrel.servo.attach(servos.valve_in_barrel.pin);
     servos.valve_out_barrel.servo.attach(servos.valve_out_barrel.pin);
     servos.valve_out_hose.servo.attach(servos.valve_out_hose.pin);
+    servos.pump.servo.attach(servos.pump.pin);
 }
 
 void Servos::actOnChanges(update_t &_update, state_t &_state) {
     if (_update.servos) {
         _update.servos = false;
-        drivePump(_state.motorSpeed);
+        drivePump(servos.pump, _state.motorSpeed);
         setServo(servos.valve_in_stream, _state.valve_in_stream);
         setServo(servos.valve_in_barrel, _state.valve_in_barrel);
         setServo(servos.valve_out_barrel,_state.valve_out_barrel);
@@ -97,27 +88,7 @@ void setServo(valve_servo_t &_servo, bool _state) {
     }
 }
 
-void drivePump(byte _percentage) {
-    byte ones = _percentage / 10;
-    for (byte i = 0; i < 10; i++) {
-        if (i < ones) {
-            pwm_array[i] = 1;
-        } else {
-            pwm_array[i] = 0;
-        }
-    }
-}
-
-ISR(TIMER2_COMPA_vect) {
-    if (pwm_array[pwm_position] == 1) {
-        PORTB |= (1 << PB3);
-    } else {
-        PORTB &= ~(1 << PB3);
-    }
-
-    if (pwm_position < 9) {
-        pwm_position++;
-    } else {
-        pwm_position = 0;
-    }
+void drivePump(valve_servo_t &_servo, byte _percentage) {
+    int pulselength = map(_percentage, 0, 100, _servo.min, _servo.max);
+    _servo.servo.write(pulselength);
 }
