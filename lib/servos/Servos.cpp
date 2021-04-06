@@ -29,7 +29,7 @@
 
 /// PUMP /////////////////////////
 #define MOTOR_PIN 11
-#define MOTOR_MIN 10
+#define MOTOR_MIN 20
 #define MOTOR_MAX 80
 //////////////////////////////////
 
@@ -55,11 +55,11 @@ void drivePump(valve_servo_t &_servo, byte _percentage);
 void setServo(valve_servo_t &_servo, bool _state);
 
 void Servos::init() {
+    servos.pump.servo.attach(servos.pump.pin);
     servos.valve_in_stream.servo.attach(servos.valve_in_stream.pin);
     servos.valve_in_barrel.servo.attach(servos.valve_in_barrel.pin);
     servos.valve_out_barrel.servo.attach(servos.valve_out_barrel.pin);
     servos.valve_out_hose.servo.attach(servos.valve_out_hose.pin);
-    servos.pump.servo.attach(servos.pump.pin);
 }
 
 void Servos::actOnChanges(update_t &_update, state_t &_state) {
