@@ -4,17 +4,17 @@
 #define FLOW_PIN 3
 #define BUZZER_PIN 7
 
-static double minVoltage = 18.0;
+static double minVoltage = 16.0;
 static double maxVoltage = 21.0;
 
 static double minFlow = 0;
-static double maxFlow = 1000;
+static double maxFlow = 600;
 
 byte underVoltage = 0;
 byte underFlow = 0;
 byte treshold = 5;
 
-volatile byte flowCount = 0;
+static volatile byte flowCount = 0;
 
 static unsigned long lastUpdate = 0;
 

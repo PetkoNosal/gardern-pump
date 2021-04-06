@@ -29,8 +29,8 @@
 
 /// PUMP /////////////////////////
 #define MOTOR_PIN 11
-#define MOTOR_MIN 0
-#define MOTOR_MAX 122
+#define MOTOR_MIN 10
+#define MOTOR_MAX 80
 //////////////////////////////////
 
 typedef struct {
